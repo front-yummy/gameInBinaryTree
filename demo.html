@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+    #stage {
+        width: 300px;
+        height: 300px;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    #background {
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        background: #000;
+    }
+
+    #cannon {
+        /*大炮*/
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        top: 270px;
+        left: 140px;
+        background: url(img/cannon.png) no-repeat;
+        background-size: 100%;
+    }
+
+    #missile {
+        /*炮弹*/
+        width: 30px;
+        height: 20px;
+        position: absolute;
+        top: 250px;
+        left: 150px;
+        background: url(img/missile.png) no-repeat center;
+        background-size: auto 100%;
+    }
+
+    #alien {
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        top: 20px;
+        left: 80px;
+        background: url(img/alien.png) no-repeat;
+        background-size: 100%;
+    }
+
+    #explosion {
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        top: 270px;
+        left: 150px;
+        background: url(img/explosion.png) no-repeat;
+        background-size: 100%;
+        display: none;
+    }
+
+    #btn {
+        display: inline-block;
+        width: 100px;
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        background: #f00;
+        color: #fff;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+
+    input {
+        width: 100px;
+        height: 30px;
+        border-radius: 4px;
+        outline: none;
+        border: 1px solid #ccc;
+        padding-left: 5px;
+    }
+
+    .center {
+        text-align: center;
+        width: 500px;
+        margin: 0 auto;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="center">
+        <div id="stage">
+            <div id="background"></div>
+            <div id="cannon"></div>
+            <div id="missile"></div>
+            <div id="alien"></div>
+            <div id="explosion"></div>
+        </div>
+        <p id="output">请输入X和Y坐标（0-300），然后点击fire.</p>
+        <div>
+            <input type="text" id="inputX" placeholder="X...">
+            <input type="text" id="inputY" placeholder="Y...">
+            <a href="javascript:void(0);" id="btn">fire!</a>
+        </div>
+    </div>
+    <script>
+    function BinaryTree() {
+        var Node = function(key) {
+            this.key = key;
+            this.left = null;
+            this.right = null;
+        }
+        var root = null;
+        var insertNode = function(node, newNode) {
+            if (node.key > newNode.key) {
+                if (node.left === null)
+                    node.left = newNode;
+                else {
+                    insertNode(node.left, newNode);
+                }
+            } else {
+                if (node.right === null) {
+                    node.right = newNode;
+                } else {
+                    insertNode(node.right, newNode);
+                }
+            }
+        }
+        this.insert = function(key) {
+            var newNode = new Node(key);
+            if (root == null)
+                root = newNode;
+            else
+                insertNode(root, newNode);
+        };
+
+        var inorderTraverseNode = function(node, callback) {
+            if (node != null) {
+                inorderTraverseNode(node.left, callback);
+                callback(node.key);
+                inorderTraverseNode(node.right, callback);
+            }
+        }
+        //中序遍历
+        this.inOrderTraverse = function(callback) {
+            inorderTraverseNode(root, callback);
+        }
+        //最小节点	
+        var minNode = function(node) {
+            if (node) {
+                while (node.left !== null) {
+                    return minNode(node.left);
+                }
+                return node.key;
+            }
+            return null;
+        }
+        this.min = function() {
+            return minNode(root);
+        }
+        //最大节点
+        var maxNode = function(node) {
+            if (node) {
+                while (node.right !== null) {
+                    return maxNode(node.right);
+                }
+                return node.key;
+            }
+            return null;
+        }
+        this.max = function() {
+            return maxNode(root);
+        }
+
+        //查找指定值有返回true,没有则返回false
+        var searchNode = function(key, node) {
+            if (node == null) {
+                return false;
+            }
+            if (node.key > key) {
+                return searchNode(key, node.left);
+            } else if (node.key < key) {
+                return searchNode(key, node.right);
+            } else {
+                return node;
+            }
+        }
+        this.search = function(key) {
+            return searchNode(key, root);
+        }
+        
+        //删除指定的节点
+        var removeNode = function(key, node) {
+            if (node == null)
+                return false;
+            if (key < node.key) {
+                var node1 = removeNode(key, node.left);
+                node.left = node1;
+                return node;
+            } else if (key > node.key) {
+                node.right = removeNode(key, node.right);
+            } else {
+                if (node.left === null && node.right === null) { //叶子节点的删除
+                    node = null;
+                    return node;
+                } else if (node.right === null) { //只有左子树的节点删除
+                    node = node.left;
+                    return node;
+                } else if (node.left === null) { //只有右子树的节点删除
+                    node = node.right;
+                    return node;
+                } else { //中间节点，既有左子树也有右子树，删除原理：左子树上的所有节点肯定比被删除的节点小，则不需要动，右子树有可能是一群树链，要找到这群树链中的最小值所在的节点，将此最小值赋值给被删除的节点，并删除该最小值所在的节点，这样可以保证被删除的节点后的值肯定比右边的所有节点小，比所有节点大。
+                    node.key = minNode(node.right);
+                    removeNode(node.key, node.right);
+                    return node;
+
+                }
+            }
+        }
+        this.remove = function(key) {
+            return removeNode(key, root);
+        }
+    }
+
+    // var nodes = [8, 3, 10, 1, 6, 14, 4, 7, 13];
+    // var binaryTree = new BinaryTree();
+    // nodes.forEach(function(value, key) {
+    //     binaryTree.insert(value);
+    // });
+
+    // var callback = function(key) {
+    //     console.log(key);
+    // }
+    // binaryTree.inOrderTraverse(callback);
+    // console.log(binaryTree.min());
+    // console.log(binaryTree.max());
+    // console.log(binaryTree.search(4));
+    // console.log(binaryTree.search(100));
+    // binaryTree.remove(3); //删除中间节点
+    // binaryTree.inOrderTraverse(callback);
+
+
+    var alienX = 20;
+    var alienY = 20;
+    var guessX = 130,
+        guessY = 250,
+        shotsRemaning = 8,
+        shotsMade = 0,
+        gameState = "",
+        gameWon = false;
+
+    var cannon = document.querySelector("#cannon"),
+        alien = document.querySelector("#alien"),
+        missile = document.querySelector("#missile"),
+        explosion = document.querySelector('#explosion');
+
+    var inputX = document.querySelector('#inputX'),
+        inputY = document.querySelector('#inputY'),
+        output = document.querySelector('#output');
+
+    var button = document.querySelector("#btn");
+    button.style.cursor = "pointer";
+    // init alienSiteArray
+
+    var nodesForAlien = []; //存放二叉树节点的数组
+    for (var i = 0; i < 10; i++) {
+        nodesForAlien.push(Math.floor(Math.random() * 281)); //Math.floor()浮点数的地板，向下取整
+    }
+    // activate first alienSite
+    var alienNodeSelect = Math.floor(Math.random() * 9);
+
+    var binaryTree = new BinaryTree();
+    nodesForAlien.forEach(function(key) {
+        binaryTree.insert(key)
+    });
+
+    var nodesForAlien = [];
+    var callback = function(key) {
+        console.log(key);
+        nodesForAlien.push({ key: key, selected: false });
+    }
+    var call = function(key) {
+        console.log(key);
+    }
+    //binaryTree.inOrderTraverse(call);
+    binaryTree.inOrderTraverse(callback); //通过前序遍历复制二叉树存入数组nodesForAlien中
+
+
+    //建立第一次外星人横坐标
+    var alienNodeSelect = Math.floor(Math.random() * 9);
+    nodesForAlien[alienNodeSelect].selected = true;
+    var alienX = nodesForAlien[alienNodeSelect].key;
+    render();
+
+    //Game section
+
+    button.addEventListener("click", clickHandler, false);
+    window.addEventListener("keydown", keydownHandler, false);
+
+    function clickHandler() {
+        validateInput();
+    }
+
+    function keydownHandler() {
+        if (event.keyCode === 13) {
+            validateInput();
+        }
+    }
+
+    function validateInput() {
+        guessX = parseInt(inputX.value);
+        guessY = parseInt(inputY.value);
+        if (isNaN(guessX) || isNaN(guessY)) {
+            output.innerHTML = "请输入数字坐标";
+        } else if (guessX > 300 || guessY > 300) {
+            output.innerHTML = "坐标不能大于300"
+        } else {
+            playGame();
+        }
+    }
+
+    function playGame() {
+        shotsRemaning--;
+        shotsMade++;
+        gameState = "炮弹：" + shotsMade + ",数量：" + shotsRemaning;
+
+        guessX = parseInt(inputX.value);
+        guessY = parseInt(inputY.value);
+        var alienNode = binaryTree.search(guessX);
+
+        if (alienNode && (guessY >= alienY && guessY <= alienY + 20)) {
+            gameWon = true;
+            endGame();
+        } else {
+            if (shotsRemaning < 1) {
+                endGame();
+            } else
+                output.innerHTML = "没有击中" + "<br>" + gameState;
+        }
+
+        if (!gameWon) {
+            nodesForAlien[alienNodeSelect].selected = false;
+            alienNodeSelect = Math.floor(Math.random() * 9);
+            nodesForAlien[alienNodeSelect].selected = true;
+            alienX = nodesForAlien[alienNodeSelect].key;
+            alienY += 30;
+        }
+
+        render();
+
+    }
+
+    function render() {
+        alien.style.left = alienX + 'px';
+        alien.style.top = alienY + 'px';
+
+        cannon.style.left = guessX + 'px';
+
+        missile.style.left = guessX + 'px';
+        missile.style.top = guessY + 'px';
+
+        if (gameWon) {
+            explosion.style.display = 'block';
+            explosion.style.left = alienX + 'px';
+            explosion.style.top = alienY + 'px';
+
+            alien.style.display = "none";
+            missile.style.display = "none";
+        }
+        console.log("X:" + alienX);
+        console.log("Y:" + alienY);
+    }
+
+    function endGame() {
+        if (gameWon) {
+            output.innerHTML = "Hit! 你拯救了地球" + "<br>" + "你发射了炮弹" + shotsMade;
+        } else {
+            output.innerHTML = "失败了！" + "<br>" + "地球被外星人侵略！";
+        }
+
+        button.removeEventListener("click", clickHandler, false);
+        button.disabled = true;
+        window.removeEventListener("keydown", keydownHandler, false);
+        inputX.disabled = true;
+        inputY.disabled = true;
+    }
+    </script>
+</body>
+
+</html>
